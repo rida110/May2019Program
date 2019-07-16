@@ -1,13 +1,21 @@
 package com.mastek.training.hrapp.entities;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -35,6 +43,48 @@ public class Employee
 	@Value("100.0")
 	private double salary;
 	
+    //@ManytoMany : configuring the association for both the entities
+    //@Jointable: Provides all the configuration for the third table
+    //name: name of the Join table
+    //joinColumns: Foreign Key column name for current class
+    //inverseJoinColumns: Foreign key Column for other class
+	
+
+	
+	private Set<Project> assignments = new HashSet<>();
+	
+	@ManyToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+	@JoinTable(name="JPA_ASSIGNMENTS", joinColumns=@JoinColumn(name="FK_EMPNO"),
+				inverseJoinColumns=@JoinColumn(name="FK_PROJECTID"))
+	
+	public Set<Project> getAssignments() {
+		return assignments;
+	}
+
+	public void setAssignments(Set<Project> assignments) {
+		this.assignments = assignments;
+	}
+	
+	
+	//@ManyToOne: Each employee belongs to one Department
+	Department currentDepartment;
+	
+	
+	//@ManyToOne: associating the many class to on object
+	//@JoinColumn: configure the foreign column
+	//	for the association between the entities
+	@ManyToOne
+	@JoinColumn(name="FK_DepartmentId")
+	public Department getCurrentDepartment() {
+		return currentDepartment;
+	}
+
+	public void setCurrentDepartment(Department currentDepartment) {
+		this.currentDepartment = currentDepartment;
+	}
+	
+	
+
 	// getters and setters and constructor using fields
 	public Employee() {
 		System.out.println("Employee Created");
